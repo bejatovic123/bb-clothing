@@ -1,4 +1,4 @@
-import Menu from './components/directory/directory.componetnt';
+import Menu from './components/Menu/menu.componetnt';
 
 const App = () => {
   const categories = [
