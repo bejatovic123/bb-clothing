@@ -3,10 +3,11 @@ import {
   createAuthUserWithEmailAndPassword,
   createUserDocumentFromAuth,
 } from '../../utils/firebase/firebase.utils';
-import FormInput from '../../form-input/form-input.component';
+import FormInput from '../form-input/form-input.component';
 import './sign-up-form.styles.scss';
 import Button from '../button/button.compont';
 
+//----------default value---------------
 const defaultFormFields = {
   displayName: '',
   email: '',
@@ -16,12 +17,14 @@ const defaultFormFields = {
 
 const SignUpForm = () => {
   const [formFields, setFormFields] = useState(defaultFormFields);
+  //-------------------------------------------------------------------
   const { displayName, email, password, confirmPassword } = formFields;
 
   const resetFormFields = () => {
     setFormFields(defaultFormFields);
   };
 
+  //--------SUBMITTING the FORM and getting the DATA----------
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -30,11 +33,13 @@ const SignUpForm = () => {
       return;
     }
 
+    //------.userOBJ.--------CREATE USER FROM EMAIL AND PASSWORD-----retruns an object and next line create it IN THE DATA BASE and refresh the Dom object to empty
     try {
       const { user } = await createAuthUserWithEmailAndPassword(
         email,
         password,
       );
+      //DATABASE CREATING THE USER OBJ
       await createUserDocumentFromAuth(user, { displayName });
       resetFormFields();
     } catch (error) {
@@ -46,6 +51,7 @@ const SignUpForm = () => {
     }
   };
 
+  //----UPDATING THE STATE FROM FROM THE FORM BINDING IT TOGEATHER-------
   const handleChange = (e) => {
     const { name, value } = e.target;
 
