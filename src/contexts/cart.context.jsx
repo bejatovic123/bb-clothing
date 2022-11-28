@@ -1,13 +1,60 @@
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
+
+const addCartItem = (cartItems, productToAdd) => {
+  //------------------------------------------------
+  const existingCartItem = cartItems.find(
+    (cartItem) => cartItem.id === productToAdd.id,
+  );
+
+  //if it is an existing product
+  if (existingCartItem) {
+    return cartItems.map((cartItem) =>
+      cartItem.id === productToAdd.id
+        ? //spreading the cart item, the old properties and adding quantity +1
+          { ...cartItem, quantity: cartItem.quantity + 1 }
+        : cartItem,
+    );
+  }
+
+  // else   ____if it is a new product spread the old items and add a new object of clicked item id and add quantity 1
+  return [...cartItems, { ...productToAdd, quantity: 1 }];
+};
 
 export const CartContext = createContext({
   isCartOpen: false,
   setIsCartOpen: () => {},
+  //--------------------------
+  cartItems: [],
+  addItemToCart: () => {},
+  //----------------------------
 });
 
 export const CartProvider = ({ children }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const value = { isCartOpen, setIsCartOpen };
+  //------------------------------------------------------
+  const [cartItems, setCartItems] = useState([]);
+  //-------------------------------------------------------
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    const newCartCount = cartItems.reduce(
+      (total, cartItem) => total + cartItem.quantity,
+      0,
+    );
+    setCartCount(newCartCount);
+  }, [cartItems]);
+
+  const addItemToCart = (product) => {
+    setCartItems(addCartItem(cartItems, product));
+  };
+
+  const value = {
+    isCartOpen,
+    setIsCartOpen,
+    addItemToCart,
+    cartItems,
+    cartCount,
+  };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
